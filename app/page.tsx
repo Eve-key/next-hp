@@ -1,69 +1,71 @@
-import Image from "next/image";
+﻿import Image from "next/image";
+import Link from "next/link";
+import { assetPath } from "./asset-path";
+import { characters } from "./characters";
+import SiteFrame from "./site-frame";
 import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <SiteFrame current="/">
+      <main>
+        <section className={styles.hero} aria-labelledby="title">
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow} lang="en">A SCHOOL ROMANCE VISUAL NOVEL</p>
+            <h1 id="title">放課後、<br /><span>春</span>を待つ。</h1>
+            <p className={styles.tagline}>きみと見つけた、<br />あの日の続きを探して。</p>
+            <Link className={styles.storyLink} href="/story/">物語を読む <span aria-hidden="true">→</span></Link>
+          </div>
+          <div className={styles.heroArt}>
             <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+              src={assetPath("/spring-key-visual.jpg")}
+              alt="桜ヶ丘学園の中庭に集まる、夏制服姿の凪紗、蘭、琴葉、理央"
+              fill
+              fetchPriority="high"
+              sizes="(max-width: 760px) 100vw, 68vw"
             />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          </div>
+        </section>
+
+        <section className={styles.story} id="story" aria-labelledby="story-title">
+          <div className={styles.sectionHeading}>
+            <p className={styles.eyebrow} lang="en">STORY</p>
+            <h2 id="story-title">桜が散るまで、あと少し。</h2>
+          </div>
+          <p className={styles.synopsis}>
+            春休み明け、桜ヶ丘学園の旧校舎で、一通の手紙を見つけた。
+            差出人の名前はなく、末尾には「最後の花びらが落ちる前に、またここで」とだけ書かれている。
+            手紙の主を探す放課後、きみは四人の少女と出会う。
+          </p>
+        </section>
+
+        <section className={styles.characters} id="characters" aria-labelledby="character-title">
+          <div className={styles.sectionHeading}>
+            <p className={styles.eyebrow} lang="en">CHARACTER</p>
+            <h2 id="character-title">登場人物</h2>
+          </div>
+          <div className={styles.cards}>
+            {characters.map((character) => (
+              <article className={styles.card} key={character.id}>
+                <div className={styles.portrait}>
+                  <Image
+                    src={assetPath(character.image)}
+                    alt=""
+                    fill
+                    sizes="(max-width: 760px) 46vw, 24vw"
+                  />
+                </div>
+                <div className={styles.profile}>
+                  <p className={styles.role} style={{ color: character.color }}>{character.role}</p>
+                  <h3><Link href={`/characters/${character.id}/`}>{character.name}</Link></h3>
+                  <p className={styles.roman} lang="en">{character.roman}</p>
+                  <p className={styles.quote}>「{character.line}」</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       </main>
-    </div>
+    </SiteFrame>
   );
 }
