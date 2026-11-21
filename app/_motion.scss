@@ -1,0 +1,15 @@
+$ease-out: cubic-bezier(.2, .65, .25, 1);
+
+@mixin rise-keyframes {
+  @keyframes rise-in {
+    from {
+      opacity: .72;
+      transform: translateY(.65rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

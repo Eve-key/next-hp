@@ -64,3 +64,25 @@ test("mobile gallery opens an image and restores keyboard focus on Escape", asyn
   const overflowing = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
   expect(overflowing).toBe(false);
 });
+
+test("TOP stages art, title and CTA while respecting reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("./");
+  const hero = page.getByRole("region", { name: /放課後、\s*春を待つ。/ });
+  const timing = async () => hero.evaluate((section) => {
+    const elements = [section.querySelector("img"), section.querySelector("h1"), section.querySelector("a")];
+    return elements.map((element) => {
+      if (!element) throw new Error("Missing hero element");
+      const style = getComputedStyle(element);
+      return { animation: style.animationName, delay: parseFloat(style.animationDelay) };
+    });
+  });
+  const [art, title, cta] = await timing();
+  expect([art, title, cta].every(({ animation }) => animation !== "none")).toBe(true);
+  expect(art.delay).toBeLessThan(title.delay);
+  expect(title.delay).toBeLessThan(cta.delay);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect((await timing()).every(({ animation }) => animation === "none")).toBe(true);
+  await expect(hero.getByRole("link", { name: "物語を読む" })).toBeVisible();
+});

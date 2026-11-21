@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { assetPath } from "../asset-path";
 import SiteFrame from "../site-frame";
-import styles from "../subpage.module.css";
+import styles from "../subpage.module.scss";
 
 export const metadata: Metadata = {
   title: "物語 | 放課後、春を待つ。",

@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { assetPath } from "../../asset-path";
 import { characters, findCharacter, characterNeighbors } from "../../characters";
 import SiteFrame from "../../site-frame";
-import styles from "../../subpage.module.css";
+import styles from "../../subpage.module.scss";
 
 type ProfileProps = { params: Promise<{ id: string }> };
 

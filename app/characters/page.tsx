@@ -1,10 +1,11 @@
 ﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { assetPath } from "../asset-path";
 import { characters } from "../characters";
 import SiteFrame from "../site-frame";
-import styles from "../subpage.module.css";
+import styles from "../subpage.module.scss";
 
 export const metadata: Metadata = {
   title: "登場人物 | 放課後、春を待つ。",
@@ -22,12 +23,16 @@ export default function Characters() {
         <ul className={styles.cardGrid}>
           {characters.map((character) => (
             <li key={character.id}>
-              <Link href={`/characters/${character.id}/`} className={styles.card}>
+              <Link
+                href={`/characters/${character.id}/`}
+                className={styles.card}
+                style={{ "--character-accent": character.color } as CSSProperties}
+              >
                 <div className={styles.cardArt}>
                   <Image src={assetPath(character.image)} alt="" fill sizes="(max-width: 760px) 46vw, 270px" />
                 </div>
                 <div className={styles.cardBody}>
-                  <p style={{ color: character.color }}>{character.role}</p>
+                  <p>{character.role}</p>
                   <h2>{character.name}</h2>
                   <span lang="en">{character.roman}</span>
                 </div>

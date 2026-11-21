@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import { assetPath } from "../asset-path";
-import styles from "../subpage.module.css";
+import styles from "../subpage.module.scss";
 
 type Artwork = { image: `/${string}`; title: string; wide: boolean };
 

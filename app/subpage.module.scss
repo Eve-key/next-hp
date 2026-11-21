@@ -1,4 +1,6 @@
-﻿.page {
+﻿@use "./motion";
+
+.page {
   width: min(100% - 2rem, 1120px);
   min-height: 68vh;
   margin-inline: auto;
@@ -104,6 +106,15 @@
   background: #fff;
 }
 
+.card:is(:hover, :focus-visible) {
+  border-color: var(--character-accent);
+  box-shadow: 0 .65rem 1.55rem #4220321c;
+}
+
+.card:focus-visible {
+  outline-color: var(--character-accent);
+}
+
 .cardArt,
 .profileArt {
   aspect-ratio: 3 / 3.55;
@@ -118,6 +129,10 @@
 .role {
   margin: 0;
   font-size: .78rem;
+}
+
+.cardBody p {
+  color: var(--character-accent);
 }
 
 .cardBody p,
@@ -135,7 +150,7 @@
   font: 700 clamp(1.08rem, 2.2vw, 1.7rem) / 1.4 var(--mincho);
 }
 
-.card:hover h2,
+.card:is(:hover, :focus-visible) h2,
 .back:hover {
   color: var(--rose);
   text-decoration: underline;
@@ -298,6 +313,57 @@
   max-height: 78vh;
   margin-inline: auto;
   object-fit: contain;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @include motion.rise-keyframes;
+
+  @keyframes lightbox-in {
+    from {
+      opacity: .78;
+      transform: scale(.975);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .card {
+    transition: border-color 200ms, box-shadow 200ms, transform 250ms motion.$ease-out;
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-.25rem);
+    }
+  }
+
+  .profileArt {
+    animation: rise-in 600ms motion.$ease-out both;
+  }
+
+  .profileText h1,
+  .profileText .roman {
+    animation: rise-in 480ms motion.$ease-out 140ms both;
+  }
+
+  .profileText blockquote {
+    animation: rise-in 480ms motion.$ease-out 260ms both;
+  }
+
+  .lightbox[open] {
+    animation: lightbox-in 260ms motion.$ease-out both;
+  }
+
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .storyText blockquote {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
 }
 
 @media (max-width: 760px) {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { assetPath } from "./asset-path";
 import { characters } from "./characters";
 import SiteFrame from "./site-frame";
-import styles from "./page.module.css";
+import styles from "./page.module.scss";
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
               alt="桜ヶ丘学園の中庭に集まる、夏制服姿の凪紗、蘭、琴葉、理央"
               fill
               fetchPriority="high"
-              sizes="(max-width: 760px) 100vw, 68vw"
+              sizes="(max-width: 900px) 92vw, 65vw"
             />
           </div>
         </section>
