@@ -1,0 +1,317 @@
+﻿.page {
+  width: min(100% - 2rem, 1120px);
+  min-height: 68vh;
+  margin-inline: auto;
+  padding-block: clamp(2.5rem, 6vw, 5.5rem);
+}
+
+.title {
+  margin: 0 0 clamp(1.5rem, 4vw, 3rem);
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid #e8ccd6;
+}
+
+.title p,
+.roman {
+  margin: 0;
+  color: var(--rose);
+  font: 700 .76rem Georgia, serif;
+  letter-spacing: .19em;
+}
+
+.title h1,
+.profileText h1 {
+  margin: .6rem 0 0;
+  font: 700 clamp(2rem, 5.5vw, 3.6rem) / 1.3 var(--mincho);
+}
+
+.storyArt,
+.galleryWide,
+.cardArt,
+.profileArt {
+  position: relative;
+  background: #f5e5e9;
+}
+
+.storyArt {
+  aspect-ratio: 2.05;
+}
+
+.storyArt img,
+.galleryWide img,
+.cardArt img,
+.profileArt img {
+  object-fit: cover;
+}
+
+.storyArt img {
+  object-position: center 39%;
+}
+
+.storyText {
+  width: min(100%, 45rem);
+  margin: clamp(1.7rem, 4vw, 3.4rem) auto 0;
+  font: 500 clamp(1rem, 1.55vw, 1.13rem) / 2 var(--mincho);
+}
+
+.storyText p {
+  margin: 0 0 1.3em;
+}
+
+.storyText blockquote,
+.profileText blockquote {
+  margin: 1.5rem 0;
+  padding: .85rem 1.1rem;
+  border-left: 2px solid #ae6179;
+  color: #7e304a;
+  background: #f8e9ee;
+  font: 700 clamp(.98rem, 2vw, 1.3rem) / 1.75 var(--mincho);
+}
+
+.button {
+  display: inline-flex;
+  gap: .9rem;
+  align-items: center;
+  padding: .65rem 1rem;
+  border: 1px solid #ae6179;
+  color: #7e304a;
+  font: 700 .9rem / 1.5 var(--mincho);
+}
+
+.button:hover,
+.profileNav a:hover {
+  background: #f8e9ee;
+}
+
+.cardGrid,
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(.65rem, 2vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: block;
+  height: 100%;
+  border: 1px solid #e8ccd6;
+  background: #fff;
+}
+
+.cardArt,
+.profileArt {
+  aspect-ratio: 3 / 3.55;
+}
+
+.cardBody {
+  padding: clamp(.65rem, 1.75vw, 1.35rem);
+}
+
+.cardBody p,
+.cardBody span,
+.role {
+  margin: 0;
+  font-size: .78rem;
+}
+
+.cardBody p,
+.role {
+  font-weight: 700;
+}
+
+.cardBody span {
+  color: #695866;
+  font-family: Georgia, serif;
+}
+
+.cardBody h2 {
+  margin: .4rem 0 .15rem;
+  font: 700 clamp(1.08rem, 2.2vw, 1.7rem) / 1.4 var(--mincho);
+}
+
+.card:hover h2,
+.back:hover {
+  color: var(--rose);
+  text-decoration: underline;
+  text-underline-offset: .25em;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 1.4rem;
+  color: #7e304a;
+  font-size: .88rem;
+  font-weight: 700;
+}
+
+.profile {
+  display: grid;
+  grid-template-columns: minmax(0, 475px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4.4rem);
+}
+
+.profileArt {
+  border: 1px solid #e8ccd6;
+}
+
+.roman {
+  margin-top: .65rem;
+}
+
+.profileFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1.3rem;
+  margin: 1.4rem 0;
+}
+
+.profileFacts div {
+  display: flex;
+  align-items: baseline;
+  gap: .7rem;
+}
+
+.profileFacts dt {
+  color: #725164;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.profileFacts dd {
+  margin: 0;
+  font: 700 1rem var(--mincho);
+}
+
+.biography {
+  margin: 0;
+  font: 500 1rem / 2 var(--mincho);
+}
+
+.profileNav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+}
+
+.profileNav a {
+  padding: .85rem 1rem;
+  border: 1px solid #e8ccd6;
+  font: 700 1rem / 1.45 var(--mincho);
+}
+
+.profileNav a:last-child {
+  text-align: right;
+}
+
+.profileNav span {
+  display: block;
+  margin-bottom: .2rem;
+  color: var(--rose);
+  font-size: .77rem;
+}
+
+.heroTile {
+  grid-column: 1 / -1;
+}
+
+.galleryWide {
+  aspect-ratio: 3 / 2;
+}
+
+.galleryButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid #e8ccd6;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  font: 700 .88rem / 1.55 var(--mincho);
+}
+
+.galleryButton:hover {
+  color: var(--rose);
+}
+
+.galleryButton > span {
+  display: flex;
+  justify-content: space-between;
+  gap: .45rem;
+  padding: .65rem .85rem;
+}
+
+.galleryButton:focus-visible,
+.lightbox button:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+.lightbox {
+  max-width: calc(100% - 1.3rem);
+  padding: 0;
+  border: 1px solid #e8ccd6;
+  background: #fffaf8;
+  color: inherit;
+}
+
+.lightbox::backdrop {
+  background: rgb(41 25 36 / .82);
+}
+
+.lightbox figure {
+  margin: 0;
+}
+
+.lightbox figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .35rem .75rem;
+  font: 700 1rem var(--mincho);
+}
+
+.lightbox button {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border: 0;
+  background: transparent;
+  color: #7e304a;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.lightbox img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 78vh;
+  margin-inline: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 760px) {
+  .profile {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .profileArt {
+    width: min(100%, 440px);
+    margin-inline: auto;
+  }
+
+  .cardGrid,
+  .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .storyArt {
+    aspect-ratio: 3 / 2;
+  }
+}

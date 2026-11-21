@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# 放課後、春を待つ。
 
-## Getting Started
+桜ヶ丘学園を舞台にした、オリジナル学園恋愛ノベルの紹介サイトです。TOP、物語、登場人物一覧、4人の個別プロフィール、拡大表示付きギャラリーを収録しています。
 
-First, run the development server:
+## ローカルで開く
 
-```bash
+Node.js 24.15.0 を使います。
+
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+開発サーバーは `http://localhost:3000` で開きます。静的エクスポートを確認するときは `npm run build` の後に `npm start` を実行してください。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## テスト
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npx playwright install chromium --only-shell
+npm run lint
+npm run test:unit
+npm run build
+npm run test:e2e
+npm run test:vrt
+```
 
-## Learn More
+- UNIT はキャラクターのID、素材、前後ナビゲーションを確認します。
+- E2E は静的ビルドを使用し、主要ページへの遷移、4人の直リンク、404、ギャラリーのキーボード操作を確認します。
+- VRT は同じビルドの主要5画面をデスクトップ・モバイルの2幅で比較します。基準画像は `tests/browser/snapshots/` にあります。意図したデザイン変更がある場合は Windows 上で `npm run test:vrt:update` を実行し、画像差分をレビューしてください。OS やフォントの違いで描画結果が変わるため、CI と同じ Windows・Chromium で更新します。
 
-To learn more about Next.js, take a look at the following resources:
+## CI/CD
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Pull Request と `main` への push で GitHub Actions が lint、UNIT、静的ビルド、E2E、VRT を実行します。CI は本番と同じ `/next-hp` 配下で検証します。失敗時は Actions の `playwright-report` にブラウザーのトレースと画像差分が保存されます。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+GitHub Pages の公開元は **Settings → Pages → Build and deployment → GitHub Actions** です。`main` の検証成功後に、そのジョブで検証した `out/` を Pages に配信します。サブパスをローカルで再現する場合は `NEXT_PUBLIC_BASE_PATH=/next-hp` を設定した同じシェルからビルド、プレビュー、ブラウザーテストを実行してください。
