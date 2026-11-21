@@ -1,9 +1,9 @@
 ﻿:root {
   color: #302435;
   background: #fffaf8;
-  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-family: "Noto Sans JP Variable", "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
   font-synthesis: none;
-  --mincho: "Yu Mincho", "Hiragino Mincho ProN", "MS PMincho", serif;
+  --mincho: "Noto Serif JP Variable", "Yu Mincho", "Hiragino Mincho ProN", "MS PMincho", serif;
   --rose: #9c405b;
 }
 

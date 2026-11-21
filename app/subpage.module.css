@@ -15,7 +15,7 @@
 .roman {
   margin: 0;
   color: var(--rose);
-  font: 700 .76rem Georgia, serif;
+  font: 700 .76rem var(--mincho);
   letter-spacing: .19em;
 }
 
@@ -23,6 +23,10 @@
 .profileText h1 {
   margin: .6rem 0 0;
   font: 700 clamp(2rem, 5.5vw, 3.6rem) / 1.3 var(--mincho);
+}
+
+.title h1 {
+  text-wrap: balance;
 }
 
 .storyArt,
@@ -123,7 +127,7 @@
 
 .cardBody span {
   color: #695866;
-  font-family: Georgia, serif;
+  font-family: var(--mincho);
 }
 
 .cardBody h2 {

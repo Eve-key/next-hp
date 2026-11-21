@@ -26,7 +26,7 @@ npm run test:vrt
 
 - UNIT はキャラクターのID、素材、前後ナビゲーションを確認します。
 - E2E は静的ビルドを使用し、主要ページへの遷移、4人の直リンク、404、ギャラリーのキーボード操作を確認します。
-- VRT は同じビルドの主要5画面をデスクトップ・モバイルの2幅で比較します。基準画像は `tests/browser/snapshots/` にあります。意図したデザイン変更がある場合は Windows 上で `npm run test:vrt:update` を実行し、画像差分をレビューしてください。OS やフォントの違いで描画結果が変わるため、CI と同じ Windows・Chromium で更新します。
+- VRT は同じビルドの主要5画面をデスクトップ・モバイルの2幅で比較します。基準画像は `tests/browser/snapshots/` にあります。意図したデザイン変更がある場合は Windows 上で `npm run test:vrt:update` を実行し、画像差分をレビューしてください。CI と同じ Windows・Chromium で撮影し、同梱の Noto Sans JP と Noto Serif JP でフォント差を抑えています。
 
 ## CI/CD
 
