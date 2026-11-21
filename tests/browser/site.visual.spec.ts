@@ -4,7 +4,7 @@ const routes = [
   ["top", "./"],
   ["story", "story/"],
   ["characters", "characters/"],
-  ["profile", "characters/nagisa/"],
+  ["profile", "characters/cocoa/"],
   ["gallery", "gallery/"],
 ];
 

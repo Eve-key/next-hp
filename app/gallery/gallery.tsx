@@ -1,36 +1,47 @@
 ﻿"use client";
 
 import Image from "next/image";
-import { useId, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { assetPath } from "../asset-path";
+import type { Artwork } from "../site-content";
 import styles from "../subpage.module.scss";
 
-type Artwork = { image: `/${string}`; title: string; wide: boolean };
+const filters = [
+  { value: "all", label: "すべて" },
+  { value: "scene", label: "場面イラスト" },
+  { value: "portrait", label: "立ち絵" },
+] as const;
 
 export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
-  const [active, setActive] = useState<Artwork | null>(null);
+  const [filter, setFilter] = useState<(typeof filters)[number]["value"]>("all");
+  const [index, setIndex] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const titleId = useId();
+  const visible = filter === "all" ? artwork : artwork.filter((piece) => piece.kind === filter);
+  const active = index === null ? undefined : visible[index];
 
-  function openArtwork(item: Artwork) {
-    setActive(item);
-    dialog.current?.showModal();
+  function changeArtwork(step: number) {
+    setIndex((current) => current === null ? null : (current + step + visible.length) % visible.length);
   }
 
   return (
     <>
+      <div className={styles.filters} role="group" aria-label="イラストの種類">
+        {filters.map(({ value, label }) => (
+          <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>
+        ))}
+      </div>
       <ul className={styles.gallery}>
-        {artwork.map((item) => (
-          <li key={item.image} className={item.wide ? styles.heroTile : undefined}>
+        {visible.map((item, position) => (
+          <li key={item.image} data-kind={item.kind}>
             <button
               className={styles.galleryButton}
               type="button"
-              onClick={() => openArtwork(item)}
+              onClick={() => { setIndex(position); dialog.current?.showModal(); }}
               aria-label={`${item.title}を拡大`}
               aria-haspopup="dialog"
             >
-              <div className={item.wide ? styles.galleryWide : styles.cardArt}>
-                <Image src={assetPath(item.image)} alt="" fill sizes={item.wide ? "100vw" : "(max-width: 760px) 46vw, 270px"} />
+              <div className={styles.galleryArt}>
+                <Image src={assetPath(item.image)} alt="" fill sizes="(max-width: 700px) 90vw, 760px" />
               </div>
               <span>{item.title}<span aria-hidden="true">＋</span></span>
             </button>
@@ -40,24 +51,32 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
       <dialog
         className={styles.lightbox}
         ref={dialog}
-        aria-labelledby={titleId}
-        onClose={() => setActive(null)}
+        aria-label={active?.title}
+        onClose={() => setIndex(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) event.currentTarget.close();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+            changeArtwork(event.key === "ArrowRight" ? 1 : -1);
+          }
         }}
       >
         {active && (
           <figure>
-            <figcaption id={titleId}>
-              {active.title}
+            <figcaption>
+              <span aria-live="polite">{active.title}</span>
               <button type="button" aria-label="閉じる" autoFocus onClick={() => dialog.current?.close()}>×</button>
             </figcaption>
-            <Image
-              src={assetPath(active.image)}
-              alt={active.title}
-              width={active.wide ? 1536 : 557}
-              height={active.wide ? 1024 : 659}
-            />
+            <div className={styles.lightboxArt}>
+              <Image src={assetPath(active.image)} alt={active.alt} fill sizes="(max-width: 900px) 94vw, 900px" />
+            </div>
+            <div className={styles.lightboxNav}>
+              <button type="button" aria-label="前のイラスト" onClick={() => changeArtwork(-1)}>←</button>
+              <span>{(index ?? 0) + 1} / {visible.length}</span>
+              <button type="button" aria-label="次のイラスト" onClick={() => changeArtwork(1)}>→</button>
+            </div>
           </figure>
         )}
       </dialog>

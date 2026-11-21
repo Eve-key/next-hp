@@ -3,11 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { assetPath } from "../asset-path";
 import SiteFrame from "../site-frame";
+import { episodes } from "../site-content";
 import styles from "../subpage.module.scss";
 
 export const metadata: Metadata = {
-  title: "物語 | 放課後、春を待つ。",
-  description: "旧校舎に残された一通の手紙から始まる、桜ヶ丘学園の放課後。",
+  title: "物語",
+  description: "春の木組みの街を舞台にした、喫茶店の日常を描くファンエピソード。",
 };
 
 export default function Story() {
@@ -15,29 +16,24 @@ export default function Story() {
     <SiteFrame current="/story/">
       <main className={styles.page}>
         <header className={styles.title}>
-          <p lang="en">STORY</p>
-          <h1>桜が散るまで、あと少し。</h1>
+          <p lang="en">STORY</p><h1>喫茶店からはじまる春。</h1>
+          <div className={styles.intro}>桜の下を歩く午後も、春雨に足を止める帰り道も。<br />木組みの街には、ひと息つける場所がある。</div>
         </header>
-        <div className={styles.storyArt}>
-          <Image src={assetPath("/spring-key-visual.jpg")} alt="" fill sizes="(max-width: 800px) 94vw, 1100px" />
+        <div className={styles.episodes}>
+          {episodes.map((episode) => (
+            <article className={styles.episode} key={episode.id} id={episode.id}>
+              <div className={styles.episodeArt}>
+                <Image src={assetPath(episode.image)} alt={episode.alt} fill sizes="(max-width: 700px) 92vw, 650px" />
+              </div>
+              <div className={styles.episodeCopy}>
+                <h2>{episode.title}</h2>
+                <p className={styles.episodeTeaser}>{episode.teaser}</p>
+                <p>{episode.text}</p>
+              </div>
+            </article>
+          ))}
         </div>
-        <div className={styles.storyText}>
-          <p>
-            春休み明け、桜ヶ丘学園の旧校舎で、きみは差出人のない手紙を見つける。
-            日付はかすれて読めない。末尾の一行だけが、やけにはっきりと残っていた。
-          </p>
-          <blockquote>最後の花びらが落ちる前に、またここで。</blockquote>
-          <p>
-            その一行を頼りに聞き込みを始めると、新聞部の凪紗が撮った写真に、
-            手紙と同じ花の模様が見つかる。音楽室で蘭が弾く曲、琴葉が見つけた古い刺繍、
-            理央が屋上でつけた天気の記録にも、少しずつ手がかりが重なっていく。
-          </p>
-          <p>
-            旧校舎の扉は、今度の雨が来る前に閉じられる。四人と過ごせる放課後のうちに、
-            きみは誰に、どんな言葉を届けるのだろう。
-          </p>
-          <Link className={styles.button} href="/characters/">登場人物を見る <span aria-hidden="true">→</span></Link>
-        </div>
+        <Link className={styles.button} href="/characters/">登場人物を見る <span aria-hidden="true">→</span></Link>
       </main>
     </SiteFrame>
   );
