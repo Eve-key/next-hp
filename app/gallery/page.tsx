@@ -1,26 +1,27 @@
 ﻿import type { Metadata } from "next";
 import { characters } from "../characters";
 import SiteFrame from "../site-frame";
+import { episodes, keyVisual, type Artwork } from "../site-content";
 import styles from "../subpage.module.scss";
 import Gallery from "./gallery";
 
 export const metadata: Metadata = {
-  title: "ギャラリー | 放課後、春を待つ。",
-  description: "集合イラストと、夏制服を着た四人の立ち絵。",
+  title: "ギャラリー",
+  description: "春の喫茶店の場面イラスト、集合絵、5人の立ち絵。",
 };
 
-const artwork = [
-  { image: "/spring-key-visual.jpg", title: "キービジュアル", wide: true },
-  ...characters.map(({ image, name }) => ({ image, title: `${name}の立ち絵`, wide: false })),
-] as const;
+const artwork: readonly Artwork[] = [
+  keyVisual,
+  ...episodes,
+  ...characters.map(({ image, name }) => ({ image, title: `${name}の立ち絵`, alt: `春の学校制服姿の${name}`, kind: "portrait" as const })),
+];
 
 export default function GalleryPage() {
   return (
     <SiteFrame current="/gallery/">
       <main className={styles.page}>
         <header className={styles.title}>
-          <p lang="en">GALLERY</p>
-          <h1>ギャラリー</h1>
+          <p lang="en">GALLERY</p><h1>ギャラリー</h1>
         </header>
         <Gallery artwork={artwork} />
       </main>

@@ -1,11 +1,12 @@
 ﻿import type { Metadata } from "next";
 import "@fontsource-variable/noto-sans-jp";
 import "@fontsource-variable/noto-serif-jp";
+import { siteTitle } from "./site-content";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "放課後、春を待つ。",
-  description: "桜ヶ丘学園を舞台に、四人の少女との放課後を描く学園恋愛ノベル。",
+  title: { default: siteTitle, template: `%s | ${siteTitle}` },
+  description: "ココア、チノ、リゼ、千夜、シャロとめぐる春の喫茶店。『ご注文はうさぎですか？』の非公式ファンサイト。",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
