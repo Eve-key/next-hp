@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 import { characters } from "../characters";
 import SiteFrame from "../site-frame";
-import styles from "../subpage.module.css";
+import styles from "../subpage.module.scss";
 import Gallery from "./gallery";
 
 export const metadata: Metadata = {

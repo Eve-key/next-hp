@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 import "@fontsource-variable/noto-sans-jp";
 import "@fontsource-variable/noto-serif-jp";
-import "./globals.css";
+import "./globals.scss";
 
 export const metadata: Metadata = {
   title: "放課後、春を待つ。",

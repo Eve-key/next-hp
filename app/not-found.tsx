@@ -1,6 +1,6 @@
 ﻿import Link from "next/link";
 import SiteFrame from "./site-frame";
-import styles from "./subpage.module.css";
+import styles from "./subpage.module.scss";
 
 export default function NotFound() {
   return (
