@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useRef, useState } from "react";
@@ -27,9 +27,12 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
     <>
       <div className={styles.filters} role="group" aria-label="イラストの種類">
         {filters.map(({ value, label }) => (
-          <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>
+          <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>
+            {label}
+          </button>
         ))}
       </div>
+
       <ul className={styles.gallery}>
         {visible.map((item, position) => (
           <li key={item.image} data-kind={item.kind}>
@@ -40,14 +43,16 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
               aria-label={`${item.title}を拡大`}
               aria-haspopup="dialog"
             >
-              <div className={styles.galleryArt}>
-                <Image src={assetPath(item.image)} alt="" fill sizes="(max-width: 700px) 90vw, 760px" />
-              </div>
-              <span>{item.title}<span aria-hidden="true">＋</span></span>
+              <span className={styles.galleryArt}>
+                <Image src={assetPath(item.image)} alt="" fill sizes="(max-width: 760px) 92vw, 760px" />
+                <span className={styles.galleryZoom} aria-hidden="true">＋</span>
+              </span>
+              <span className={styles.galleryLabel} aria-hidden="true">{item.title}</span>
             </button>
           </li>
         ))}
       </ul>
+
       <dialog
         className={styles.lightbox}
         ref={dialog}
@@ -70,11 +75,13 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
               <button type="button" aria-label="閉じる" autoFocus onClick={() => dialog.current?.close()}>×</button>
             </figcaption>
             <div className={styles.lightboxArt}>
-              <Image src={assetPath(active.image)} alt={active.alt} fill sizes="(max-width: 900px) 94vw, 900px" />
+              <Image src={assetPath(active.image)} alt={active.alt} fill sizes="(max-width: 900px) 94vw, 980px" />
             </div>
             <div className={styles.lightboxNav}>
               <button type="button" aria-label="前のイラスト" onClick={() => changeArtwork(-1)}>←</button>
-              <span>{(index ?? 0) + 1} / {visible.length}</span>
+              <span className={styles.lightboxCount}>
+                {(index ?? 0) + 1}<small> / {visible.length}</small>
+              </span>
               <button type="button" aria-label="次のイラスト" onClick={() => changeArtwork(1)}>→</button>
             </div>
           </figure>
