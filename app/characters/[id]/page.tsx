@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { characters, findCharacter } from "../../characters";
 import SiteFrame from "../../site-frame";
@@ -24,8 +24,8 @@ export default async function Profile({ params }: ProfileProps) {
 
   return (
     <SiteFrame>
-      <main className={styles.page}>
-        <CharacterShowcase character={character} detail />
+      <main className={styles.profilePage}>
+        <CharacterShowcase character={character} />
       </main>
     </SiteFrame>
   );

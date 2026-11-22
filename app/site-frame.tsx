@@ -1,14 +1,23 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { ReactNode } from "react";
-import { siteTitle } from "./site-content";
-import styles from "./page.module.scss";
+import { fanNotice, siteTitle } from "./site-content";
+import styles from "./frame.module.scss";
 
 const links = [
-  { href: "/", label: "TOP" },
-  { href: "/story/", label: "STORY" },
-  { href: "/characters/", label: "CHARACTER" },
-  { href: "/gallery/", label: "GALLERY" },
+  { href: "/", label: "TOP", reading: "表紙" },
+  { href: "/story/", label: "STORY", reading: "物語" },
+  { href: "/characters/", label: "CHARACTER", reading: "登場人物" },
+  { href: "/gallery/", label: "GALLERY", reading: "イラスト" },
 ] as const;
+
+function Brand() {
+  return (
+    <Link href="/" className={styles.brand}>
+      <span className={styles.mark} aria-hidden="true">✿</span>
+      {siteTitle}
+    </Link>
+  );
+}
 
 export default function SiteFrame({
   children,
@@ -20,26 +29,27 @@ export default function SiteFrame({
   return (
     <>
       <header className={styles.header} id="top">
-        <Link href="/" className={styles.brand}>
-          <span aria-hidden="true">✿</span>{siteTitle}
-        </Link>
-        <nav aria-label="メインナビゲーション" className={styles.nav} lang="en">
-          {links.map(({ href, label }) => (
-            <Link key={href} href={href} aria-current={current === href ? "page" : undefined}>
+        <Brand />
+        <nav aria-label="メインナビゲーション" className={styles.nav}>
+          {links.map(({ href, label, reading }) => (
+            <Link key={href} href={href} aria-current={current === href ? "page" : undefined} lang="en">
               {label}
+              <span aria-hidden="true" lang="ja">{reading}</span>
             </Link>
           ))}
         </nav>
       </header>
       {children}
       <footer className={styles.footer}>
-        <div>
-          <Link href="/" className={styles.brand}><span aria-hidden="true">✿</span>{siteTitle}</Link>
-          <p>『ご注文はうさぎですか？』の非公式ファンサイト</p>
-        </div>
-        <div className={styles.footerLinks}>
-          <a href="https://gochiusa.com/bloom/">アニメ公式サイト <span aria-hidden="true">↗</span></a>
-          <a href="#top">ページトップへ <span aria-hidden="true">↑</span></a>
+        <div className={styles.footerInner}>
+          <div className={styles.footerBrand}>
+            <Brand />
+            <p>{fanNotice}</p>
+          </div>
+          <div className={styles.footerLinks}>
+            <a href="https://gochiusa.com/bloom/">アニメ公式サイト <span aria-hidden="true">↗</span></a>
+            <a href="#top">ページトップへ <span aria-hidden="true">↑</span></a>
+          </div>
         </div>
       </footer>
     </>

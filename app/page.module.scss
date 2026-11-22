@@ -1,284 +1,434 @@
-﻿@use "./motion";
+@use "./motion";
+@use "./ui";
 
-.header,
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.2rem clamp(1.1rem, 5vw, 5.5rem);
-}
-
-.header {
-  min-height: 4.3rem;
-  border-bottom: 1px solid var(--line);
-  background: var(--paper);
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: .55rem;
-  font: 750 clamp(.9rem, 2vw, 1.25rem) var(--mincho);
-  white-space: nowrap;
-
-  span {
-    display: grid;
-    place-items: center;
-    width: 1.8rem;
-    aspect-ratio: 1;
-    border: 1px solid #bc8d78;
-    border-radius: 50%;
-    color: var(--rose);
-  }
-}
-
-.nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(.75rem, 2.8vw, 2.5rem);
-  font: 750 clamp(.66rem, 1.1vw, .82rem) var(--mincho);
-  letter-spacing: .12em;
-
-  a {
-    position: relative;
-    padding-block: .35rem;
-  }
-
-  a:is(:hover, [aria-current="page"]) {
-    color: var(--rose);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: .45em;
-  }
-}
+/* ───────── 第一画面 ─────────
+   キービジュアルの下端を紙地へ溶かし、その中へ題字を立ち上げる。
+   囲みも帯も置かないので、絵と文字がひとつの絵面に見える。 */
 
 .hero {
-  display: grid;
   position: relative;
-  isolation: isolate;
-  align-items: end;
-  padding: clamp(.7rem, 2.5vw, 2rem);
-  background: repeating-linear-gradient(90deg, #713e3e 0 33px, #764141 33px 66px);
-  border-bottom: .3rem solid #a27450;
+  padding-bottom: clamp(2.6rem, 6vw, 5rem);
+  background:
+    radial-gradient(120% 68% at 50% 0%, #fdeaee 0%, #fdf3ec 42%, var(--paper) 78%);
+  overflow: hidden;
+}
+
+.heroStage {
+  position: relative;
+  width: min(100%, 1540px);
+  margin-inline: auto;
 }
 
 .heroArt {
   position: relative;
-  width: min(100%, 1480px);
-  margin-inline: auto;
-  aspect-ratio: 1.93;
-  overflow: hidden;
-  border: 1px solid #e8cf9f;
-  background: #9c765e;
+  aspect-ratio: 1.5;
+  /* 下端を紙へ溶かす。消えるのは石畳と裾だけで、顔や制服には文字がかからない */
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 99%);
 
   img {
     object-fit: cover;
-    object-position: center 38%;
+    /* 上を詰めすぎると頭が切れるので、顔の高さを基準に寄せる */
+    object-position: center 9%;
+  }
+}
+
+.petals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+
+  span {
+    position: absolute;
+    top: 0;
+    left: var(--left);
+    width: .55rem;
+    height: .7rem;
+    background: #f7c6cf;
+    border-radius: 60% 0 60% 0;
+    opacity: 0;
   }
 }
 
 .heroCopy {
-  z-index: 1;
   position: relative;
-  width: min(58%, 590px);
-  margin: -3.3rem 0 0 max(1rem, calc((100% - 1440px) / 2));
-  padding: clamp(.85rem, 2.2vw, 2rem);
-  background: #fffbf2f5;
-  outline: 1px solid #9b6a52;
-  outline-offset: -.35rem;
-  box-shadow: 0 .8rem 2rem #4424284d;
-
-  h1 {
-    margin: .45rem 0;
-    font: 750 clamp(1.8rem, 3.8vw, 3.65rem) / 1.2 var(--mincho);
-    letter-spacing: -.075em;
-  }
-
-  h1 span { white-space: nowrap; }
-  h1 span:last-child { color: var(--rose); }
-}
-
-.fanLabel {
-  margin: 0;
-  color: #7b4b43;
-  font-size: clamp(.61rem, 1vw, .78rem);
-  font-weight: 750;
-}
-
-.tagline {
-  margin: .65rem 0 .95rem;
-  font: 650 clamp(.82rem, 1.5vw, 1.1rem) var(--mincho);
-}
-
-.primary {
-  display: inline-flex;
-  gap: 1.25rem;
-  align-items: center;
-  padding: .6rem .85rem;
-  background: #743743;
-  color: #fff8ed;
-  font-size: .8rem;
-  font-weight: 700;
-
-  &:hover { background: #924954; }
-}
-
-.castSection,
-.sceneSection {
-  width: min(100% - 2.2rem, 1240px);
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: .55rem;
+  width: min(100% - var(--gutter) * 2, 46rem);
   margin-inline: auto;
-  padding-block: clamp(3rem, 6vw, 6rem);
+  margin-top: clamp(-3.4rem, -4vw, -2rem);
+  text-align: center;
 }
 
-.sceneSection {
-  border-top: 1px solid var(--line);
+/* 絵から題字へ下りてくる一本の罫線 */
+.heroThread {
+  display: block;
+  width: 1px;
+  height: clamp(1.5rem, 3.2vw, 2.4rem);
+  margin-bottom: .35rem;
+  background: linear-gradient(to bottom, transparent, var(--rose));
+  transform-origin: top;
 }
 
-.sectionHeading {
+.heroLabel {
+  /* 第一画面の桜がかった地の上でも 4.5:1 を保つ、題字より一段弱い茶 */
+  @include ui.label(#8a5b4c);
+  font-size: clamp(.58rem, 1.5vw, var(--t-label));
+}
+
+.heroCopy h1 {
+  @include ui.display(var(--t-display));
+  margin: .2rem 0 0;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+
+  span { display: inline-block; white-space: nowrap; }
+  span:last-child { color: var(--rose-deep); }
+}
+
+.heroTagline {
+  margin: .35rem 0 0;
+  font: 600 var(--t-lead) / 1.7 var(--mincho);
+  letter-spacing: .12em;
+}
+
+.heroLead {
+  max-width: 26em;
+  margin: 0;
+  color: var(--ink-soft);
+  font: 400 var(--t-small) / 2 var(--mincho);
+  letter-spacing: .06em;
+}
+
+.heroActions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: end;
-  gap: .75rem 1.5rem;
-  margin-bottom: 1.35rem;
+  justify-content: center;
+  gap: .7rem;
+  margin-top: 1.1rem;
+}
 
-  p {
-    margin: 0 0 .4rem;
-    color: var(--rose);
-    font: 750 .8rem var(--mincho);
-    letter-spacing: .21em;
-  }
+.primary { @include ui.primary-action; }
+.ghost { @include ui.ghost-action; }
+
+.heroNotice {
+  margin: .9rem 0 0;
+  color: var(--ink-faint);
+  font-size: .68rem;
+  letter-spacing: .1em;
+}
+
+/* ───────── コンセプト ───────── */
+
+.concept {
+  padding-block: var(--section);
+  background-color: var(--paper-sunk);
+  border-block: 1px solid var(--line);
+  @include ui.timber(.05);
+}
+
+.conceptInner {
+  @include ui.container(1100px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(1.4rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+.conceptHead {
+  display: grid;
+  gap: .7rem;
+
+  p { @include ui.label; }
 
   h2 {
-    margin: 0;
-    font: 750 clamp(1.65rem, 4vw, 3.35rem) / 1.25 var(--mincho);
-  }
-
-  a {
-    padding-bottom: .2rem;
-    border-bottom: 1px solid #ba9587;
-    font-size: .85rem;
-    font-weight: 700;
+    @include ui.display(var(--t-h1));
+    span { display: inline-block; white-space: nowrap; }
   }
 }
 
-.cast,
-.scenes {
-  margin: 0;
-  padding: 0;
+.conceptBody {
   display: grid;
-  gap: clamp(.65rem, 1.6vw, 1.3rem);
+  gap: 1.3rem;
+  max-width: var(--measure);
+  padding-top: .45rem;
+
+  p { @include ui.body-copy; }
+  p:first-child { font-size: var(--t-lead); line-height: 2.1; }
 }
+
+/* ───────── 節見出しの共通形 ───────── */
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: .4rem 1.5rem;
+  margin-bottom: clamp(1.5rem, 3.4vw, 3rem);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+
+  p[lang="en"] { @include ui.label; grid-column: 1; }
+
+  h2 {
+    @include ui.display(var(--t-h2));
+    grid-column: 1;
+    span { display: inline-block; white-space: nowrap; }
+  }
+  .more { grid-column: 2; grid-row: 2; }
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid #c3a18f;
+  color: var(--rose-deep);
+  font-size: var(--t-small);
+  font-weight: 700;
+  letter-spacing: .1em;
+  white-space: nowrap;
+
+  &:hover { border-color: var(--rose); color: var(--rose); }
+}
+
+/* ───────── 登場人物 ───────── */
+
+.castSection { padding-block: var(--section); }
+.castInner { @include ui.container; }
 
 .cast {
+  display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(.7rem, 1.6vw, 1.45rem);
+  margin: 0;
+  padding: 0;
   list-style: none;
 
-  a {
-    display: block;
-    padding: .38rem;
-    border: 1px solid var(--line);
-    background: var(--paper);
-  }
+  /* 一段ごとに高さをずらし、横一列の単調さを崩す */
+  li:nth-child(even) { margin-top: clamp(.9rem, 2.4vw, 2.4rem); }
 
-  a:hover { border-color: var(--accent); }
+  a { display: grid; gap: .65rem; }
 }
 
-.castArt,
+.castArt {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--tint);
+  box-shadow: 0 0 0 1px var(--line);
+
+  img { object-fit: cover; }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: .3rem;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+}
+
+.cast a:is(:hover, :focus-visible) .castArt::after { transform: scaleX(1); }
+
+.castName {
+  display: grid;
+  gap: .12rem;
+  text-align: center;
+
+  strong {
+    font: 700 clamp(1.1rem, 2.1vw, 1.6rem) / 1.3 var(--mincho);
+    color: var(--accent);
+  }
+
+  span {
+    font: 600 .62rem / 1.4 var(--gothic);
+    letter-spacing: .18em;
+    color: var(--ink-faint);
+  }
+
+  em {
+    font: 400 .68rem / 1.6 var(--mincho);
+    font-style: normal;
+    color: var(--ink-soft);
+  }
+}
+
+/* ───────── 場面 ───────── */
+
+.sceneSection {
+  padding-block: var(--section);
+  background-color: var(--paper-sunk);
+  border-block: 1px solid var(--line);
+}
+
+.sceneInner { @include ui.container; }
+
+.scenes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.2rem, 3vw, 2.8rem);
+}
+
+.scene a {
+  display: grid;
+  gap: 1rem;
+}
+
 .sceneArt {
   position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #efe0cf;
+  @include ui.braced(.55rem, 1.05rem, #fff6e6cc);
 
   img { object-fit: cover; }
 }
 
-.castArt {
-  aspect-ratio: 1;
-  overflow: hidden;
-  background: var(--tint);
-}
-
-.castName {
+.sceneCopy {
   display: grid;
-  gap: .15rem;
-  padding: .48rem .3rem .2rem;
-  color: var(--accent);
-
-  strong { font: 750 clamp(1.05rem, 2vw, 1.5rem) var(--mincho); }
-  span { font: 650 .71rem var(--mincho); }
+  gap: .45rem;
+  padding-inline: .15rem;
 }
 
-.scenes {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.sceneNumber {
+  display: flex;
+  align-items: baseline;
+  gap: .7rem;
+  margin: 0;
 
-  a {
-    display: block;
-    border-bottom: 1px solid var(--line);
-    background: var(--paper);
+  b {
+    font: 700 1.5rem / 1 var(--mincho);
+    color: var(--rose);
   }
 
-  a:hover h3 { color: var(--rose); }
+  span { @include ui.label(var(--ink-faint)); font-size: .6rem; }
 }
 
-.sceneArt {
-  aspect-ratio: 3 / 2;
-  background: #f1e4d4;
+.sceneCopy h3 {
+  margin: 0;
+  font: 700 var(--t-h3) / 1.4 var(--mincho);
 }
 
-.sceneCopy {
-  padding: .85rem 1rem 1rem;
-  h3 { margin: 0; font: 750 clamp(1.12rem, 2vw, 1.7rem) var(--mincho); }
-  p { margin: .45rem 0 0; font-size: .84rem; }
+.sceneTeaser {
+  margin: 0;
+  color: var(--ink-soft);
+  font: 400 var(--t-small) / 1.95 var(--mincho);
 }
 
-.footer {
-  color: #fff5e9;
-  background: #472e2d;
-  p { margin: .7rem 0 0; font-size: .75rem; color: #f0d7c2; }
-  .brand span { color: #efbfab; }
-  :focus-visible { outline-color: #fff5e9; }
+.scene a:hover h3 { color: var(--rose); }
+
+/* ───────── ギャラリーへの帯 ───────── */
+
+.gallerySection { padding-block: var(--section) 0; }
+.galleryInner { @include ui.container; }
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(.4rem, 1.2vw, 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #efe0cf;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  img { object-fit: cover; object-position: center 32%; }
 }
 
-.footerLinks {
-  display: flex;
-  gap: .8rem 1.6rem;
-  flex-wrap: wrap;
-  font-size: .78rem;
-  a:hover { text-decoration: underline; }
-}
+/* ───────── 動き ───────── */
 
 @media (prefers-reduced-motion: no-preference) {
   @include motion.rise-keyframes;
+  @include motion.reveal-keyframes;
+  @include motion.draw-keyframes;
+  @include motion.petal-keyframes;
 
-  @keyframes artwork-in {
-    from { opacity: .74; transform: scale(1.025); }
-    to { opacity: 1; transform: scale(1); }
+  /* 幕が上がり、罫線が下り、題字が立つ — 読む順に合わせた導入 */
+  .heroArt img { animation: art-reveal 900ms motion.$ease-soft both; }
+  .heroThread { animation: draw-down 520ms motion.$ease-out 420ms both; }
+  .heroLabel { animation: rise-in 520ms motion.$ease-out 560ms both; }
+  .heroCopy h1 { animation: rise-in 620ms motion.$ease-out 680ms both; }
+  .heroTagline { animation: rise-in 560ms motion.$ease-out 820ms both; }
+  .heroLead { animation: rise-in 560ms motion.$ease-out 900ms both; }
+  .primary { animation: rise-in 560ms motion.$ease-out 980ms both; }
+  .ghost { animation: rise-in 560ms motion.$ease-out 1040ms both; }
+  .heroNotice { animation: rise-in 560ms motion.$ease-out 1100ms both; }
+
+  /* 導入のあいだだけ舞わせる一回限りの演出。
+     最後の一片でも 1.5s の待ち + 3.4s の落下で、開始から5秒以内に収まる。 */
+  .petals {
+    display: block;
+    span { animation: petal-drift calc(2.9s + var(--order) * .1s) linear calc(var(--order) * .3s) 1 both; }
   }
 
-  .heroArt img { animation: artwork-in 760ms motion.$ease-out both; }
-  .heroCopy h1 { animation: rise-in 520ms motion.$ease-out 150ms both; }
-  .tagline { animation: rise-in 520ms motion.$ease-out 230ms both; }
-  .primary { animation: rise-in 520ms motion.$ease-out 340ms both; }
+  .castArt::after { transition: transform 300ms motion.$ease-out; }
+  .castArt img,
+  .strip img { transition: transform 420ms motion.$ease-out; }
+  .cast a:is(:hover, :focus-visible) .castArt img { transform: scale(1.045); }
+  .sceneArt img { transition: transform 520ms motion.$ease-out; }
+  .scene a:is(:hover, :focus-visible) .sceneArt img { transform: scale(1.035); }
+  .sceneCopy h3,
+  .more,
+  .primary,
+  .ghost { transition: color 220ms, background-color 220ms, border-color 220ms; }
+}
 
-  .cast a { transition: box-shadow 230ms, transform 230ms motion.$ease-out; }
-  .cast a:is(:hover, :focus-visible) { transform: translateY(-.25rem); box-shadow: 0 .5rem 1rem #68433616; }
+/* ───────── 画面幅 ───────── */
+
+@media (min-width: 761px) {
+  .heroArt { aspect-ratio: 2; }
+  .heroCopy { margin-top: clamp(-7rem, -6vw, -3.5rem); }
+}
+
+@media (min-width: 1200px) {
+  .heroArt { aspect-ratio: 2.35; }
 }
 
 @media (max-width: 900px) {
-  .heroArt { aspect-ratio: 3 / 2; }
-  .heroCopy {
-    width: 100%;
-    margin: 0;
-    padding: 1rem 1.1rem 1.2rem;
-    text-align: center;
-    h1 { font-size: clamp(1.55rem, 6.6vw, 3rem); }
-  }
+  .conceptInner { grid-template-columns: minmax(0, 1fr); }
+  .scenes { grid-template-columns: minmax(0, 1fr); }
+  .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@media (max-width: 700px) {
-  .header, .footer { flex-wrap: wrap; padding-block: .8rem; }
-  .header { gap: .35rem 1rem; }
-  .nav { width: 100%; }
-  .cast { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .scenes { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 760px) {
+  .hero { padding-bottom: 2.4rem; }
+  .heroArt { mask-image: linear-gradient(to bottom, #000 76%, transparent 99%); }
+  .heroCopy { margin-top: -2rem; gap: .4rem; }
+  .heroActions { width: 100%; flex-direction: column; align-items: stretch; }
+  .primary, .ghost { justify-content: center; }
+
+  .sectionHead {
+    grid-template-columns: minmax(0, 1fr);
+    .more { grid-column: 1; grid-row: auto; justify-self: start; margin-top: .6rem; }
+  }
+
+  .cast {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    li:nth-child(even) { margin-top: 0; }
+
+    /* 5人目は一行を使って横組みに */
+    li:last-child {
+      grid-column: 1 / -1;
+
+      a {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .castName { text-align: left; }
+    }
+  }
 }

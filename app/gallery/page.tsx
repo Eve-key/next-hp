@@ -1,7 +1,7 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { characters } from "../characters";
 import SiteFrame from "../site-frame";
-import { episodes, keyVisual, type Artwork } from "../site-content";
+import { episodes, galleryIntro, keyVisual, type Artwork } from "../site-content";
 import styles from "../subpage.module.scss";
 import Gallery from "./gallery";
 
@@ -12,8 +12,13 @@ export const metadata: Metadata = {
 
 const artwork: readonly Artwork[] = [
   keyVisual,
-  ...episodes,
-  ...characters.map(({ image, name }) => ({ image, title: `${name}の立ち絵`, alt: `春の学校制服姿の${name}`, kind: "portrait" as const })),
+  ...episodes.map(({ image, title, alt, kind }) => ({ image, title, alt, kind })),
+  ...characters.map(({ image, name }) => ({
+    image,
+    title: `${name}の立ち絵`,
+    alt: `春の学校制服姿の${name}`,
+    kind: "portrait" as const,
+  })),
 ];
 
 export default function GalleryPage() {
@@ -21,7 +26,9 @@ export default function GalleryPage() {
     <SiteFrame current="/gallery/">
       <main className={styles.page}>
         <header className={styles.title}>
-          <p lang="en">GALLERY</p><h1>ギャラリー</h1>
+          <p lang="en">GALLERY</p>
+          <h1>ギャラリー</h1>
+          <p className={styles.intro}>{galleryIntro}</p>
         </header>
         <Gallery artwork={artwork} />
       </main>

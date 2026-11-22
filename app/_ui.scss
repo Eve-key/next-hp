@@ -1,0 +1,100 @@
+/* サイト全体で共有する字組み・枠・質感 */
+
+@mixin label($color: var(--rose)) {
+  margin: 0;
+  color: $color;
+  font: 700 var(--t-label) / 1.6 var(--gothic);
+  letter-spacing: .34em;
+}
+
+@mixin display($size) {
+  margin: 0;
+  font: 700 #{$size} / 1.22 var(--mincho);
+  letter-spacing: .015em;
+  text-wrap: balance;
+}
+
+@mixin body-copy {
+  margin: 0;
+  font: 400 var(--t-body) / 2.05 var(--mincho);
+  letter-spacing: .035em;
+}
+
+@mixin container($max: 1240px) {
+  width: min(100% - var(--gutter) * 2, $max);
+  margin-inline: auto;
+}
+
+/* 木組みの格子 — 縦の柱と斜めの筋交いを薄く重ねる */
+@mixin timber($alpha: .055, $step: 88px) {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(122, 84, 64, $alpha) 0 1px, transparent 1px $step),
+    repeating-linear-gradient(42deg, rgba(122, 84, 64, $alpha * .62) 0 1px, transparent 1px $step * 1.45);
+}
+
+/* 四隅の控えめな鉤 — 絵や囲みを額装する */
+@mixin braced($inset: .6rem, $len: 1.15rem, $color: var(--gold)) {
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    width: $len;
+    height: $len;
+    pointer-events: none;
+  }
+
+  &::before {
+    top: $inset;
+    left: $inset;
+    border-top: 1px solid $color;
+    border-left: 1px solid $color;
+  }
+
+  &::after {
+    right: $inset;
+    bottom: $inset;
+    border-right: 1px solid $color;
+    border-bottom: 1px solid $color;
+  }
+}
+
+/* 節の見出し — 小さな欧文ラベルと大きな和文見出しの対比 */
+@mixin section-head {
+  display: grid;
+  gap: .55rem;
+  margin-bottom: clamp(1.5rem, 3.2vw, 2.9rem);
+
+  p[lang="en"] { @include label; }
+  h2 { @include display(var(--t-h2)); }
+}
+
+@mixin pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .9rem;
+  padding: .78rem 1.35rem;
+  font: 700 var(--t-small) / 1 var(--gothic);
+  letter-spacing: .14em;
+  white-space: nowrap;
+}
+
+@mixin primary-action {
+  @include pill;
+  color: var(--paper-raised);
+  background: var(--rose-deep);
+  border: 1px solid var(--rose-deep);
+
+  &:hover { background: var(--rose); border-color: var(--rose); }
+}
+
+@mixin ghost-action {
+  @include pill;
+  color: var(--rose-deep);
+  background: transparent;
+  border: 1px solid #c2a08e;
+
+  &:hover { background: var(--sakura); border-color: var(--rose); }
+}

@@ -1,5 +1,7 @@
 $ease-out: cubic-bezier(.2, .65, .25, 1);
+$ease-soft: cubic-bezier(.33, .02, .18, 1);
 
+/* 本文や見出しが下からそっと置かれる */
 @mixin rise-keyframes {
   @keyframes rise-in {
     from {
@@ -10,6 +12,52 @@ $ease-out: cubic-bezier(.2, .65, .25, 1);
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+}
+
+/* 絵は下から幕が上がるように現れる — 場面が開く合図 */
+@mixin reveal-keyframes {
+  @keyframes art-reveal {
+    from {
+      clip-path: inset(0 0 100% 0);
+      opacity: .35;
+      transform: scale(1.035);
+    }
+
+    to {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+/* 絵と文字をつなぐ罫線が上から引かれる */
+@mixin draw-keyframes {
+  @keyframes draw-down {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+}
+
+/* 導入の仕上げに花びらが一度だけ舞い降りる — 動きを減らす設定では描画しない。
+   落下量は包む枠の高さに対する top の割合で測るので、どの画面幅でも端まで届く。 */
+@mixin petal-keyframes {
+  @keyframes petal-drift {
+    from {
+      top: -8%;
+      opacity: 0;
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+
+    18% { opacity: .85; }
+    80% { opacity: .55; }
+
+    to {
+      top: 104%;
+      opacity: 0;
+      transform: translate3d(5.5rem, 0, 0) rotate(220deg);
     }
   }
 }

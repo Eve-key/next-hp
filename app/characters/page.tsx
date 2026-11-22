@@ -1,8 +1,8 @@
-﻿import type { Metadata } from "next";
-import { characters } from "../characters";
+import type { Metadata } from "next";
 import SiteFrame from "../site-frame";
+import { charactersIntro } from "../site-content";
 import styles from "../subpage.module.scss";
-import CharacterShowcase from "./showcase";
+import CharacterPicker from "./picker";
 
 export const metadata: Metadata = {
   title: "登場人物",
@@ -14,9 +14,11 @@ export default function Characters() {
     <SiteFrame current="/characters/">
       <main className={styles.page}>
         <header className={styles.title}>
-          <p lang="en">CHARACTER</p><h1>登場人物</h1>
+          <p lang="en">CHARACTER</p>
+          <h1>登場人物</h1>
+          <p className={styles.intro}>{charactersIntro}</p>
         </header>
-        <CharacterShowcase character={characters[0]} />
+        <CharacterPicker variant="roster" />
       </main>
     </SiteFrame>
   );
