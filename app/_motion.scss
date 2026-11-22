@@ -41,20 +41,23 @@ $ease-soft: cubic-bezier(.33, .02, .18, 1);
   }
 }
 
-/* 画面の上で花びらが流れる — 動きを減らす設定では描画しない */
+/* 導入の仕上げに花びらが一度だけ舞い降りる — 動きを減らす設定では描画しない。
+   落下量は包む枠の高さに対する top の割合で測るので、どの画面幅でも端まで届く。 */
 @mixin petal-keyframes {
   @keyframes petal-drift {
     from {
+      top: -8%;
       opacity: 0;
-      transform: translate3d(0, -12%, 0) rotate(0deg);
+      transform: translate3d(0, 0, 0) rotate(0deg);
     }
 
-    12% { opacity: .85; }
-    88% { opacity: .5; }
+    18% { opacity: .85; }
+    80% { opacity: .55; }
 
     to {
+      top: 104%;
       opacity: 0;
-      transform: translate3d(5.5rem, 115%, 0) rotate(220deg);
+      transform: translate3d(5.5rem, 0, 0) rotate(220deg);
     }
   }
 }

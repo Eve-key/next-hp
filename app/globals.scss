@@ -7,7 +7,8 @@
   --paper-sunk: #f4ebdb;
   --ink: #3b2a26;
   --ink-soft: #6f584f;
-  --ink-faint: #9a8377;
+  /* 最暗の紙地 --paper-sunk の上でも 4.5:1 を満たす薄墨 */
+  --ink-faint: #776257;
 
   /* 春の色 */
   --rose: #a0455a;

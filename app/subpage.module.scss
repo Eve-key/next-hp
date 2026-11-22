@@ -435,7 +435,6 @@
   text-align: left;
 
   &:hover .galleryLabel { color: var(--rose); }
-  &:hover .galleryZoom { opacity: 1; }
 }
 
 .galleryArt {
@@ -465,8 +464,16 @@
   background: #fffaf0e8;
   color: var(--rose-deep);
   font-size: .85rem;
-  opacity: 0;
+  /* ホバーできない端末では拡大できることが伝わらないので、既定は表示 */
+  opacity: 1;
 }
+
+/* 隠すのはポインターで狙える環境だけ。表示の条件は動きの有無とは別に持つ */
+@media (hover: hover) {
+  .galleryZoom { opacity: 0; }
+}
+
+.galleryButton:is(:hover, :focus-visible) .galleryZoom { opacity: 1; }
 
 .galleryLabel {
   font: 700 var(--t-small) / 1.5 var(--mincho);
@@ -545,7 +552,6 @@
   .galleryButton:is(:hover, :focus-visible) .galleryArt img,
   .roster a:is(:hover, :focus-visible) .pickerArt img { transform: scale(1.04); }
   .galleryZoom { transition: opacity 240ms motion.$ease-out; }
-  .galleryButton:focus-visible .galleryZoom { opacity: 1; }
 
   .strip a,
   .strip .pickerArt,

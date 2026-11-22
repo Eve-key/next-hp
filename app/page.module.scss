@@ -73,7 +73,8 @@
 }
 
 .heroLabel {
-  @include ui.label(#9a6b5c);
+  /* 第一画面の桜がかった地の上でも 4.5:1 を保つ、題字より一段弱い茶 */
+  @include ui.label(#8a5b4c);
   font-size: clamp(.58rem, 1.5vw, var(--t-label));
 }
 
@@ -365,9 +366,11 @@
   .ghost { animation: rise-in 560ms motion.$ease-out 1040ms both; }
   .heroNotice { animation: rise-in 560ms motion.$ease-out 1100ms both; }
 
+  /* 導入のあいだだけ舞わせる一回限りの演出。
+     最後の一片でも 1.5s の待ち + 3.4s の落下で、開始から5秒以内に収まる。 */
   .petals {
     display: block;
-    span { animation: petal-drift calc(9s + var(--order) * 1.6s) linear calc(var(--order) * 1.9s) infinite; }
+    span { animation: petal-drift calc(2.9s + var(--order) * .1s) linear calc(var(--order) * .3s) 1 both; }
   }
 
   .castArt::after { transition: transform 300ms motion.$ease-out; }
