@@ -38,10 +38,11 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
   }, [activeMissing]);
 
   // ネイティブダイアログは開いたボタンへフォーカスを戻す。そのボタンが別タブでの解除などで
-  // 消えていたときだけ、選択中のフィルターへ戻す
+  // 消えていたとき（フォーカスが body か、閉じたダイアログの中に残ったまま）だけ、選択中のフィルターへ戻す
   function handleClose() {
     setActiveImage(null);
-    if (!document.activeElement || document.activeElement === document.body) {
+    const focused = document.activeElement;
+    if (!focused || focused === document.body || dialog.current?.contains(focused)) {
       filterGroup.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
     }
   }

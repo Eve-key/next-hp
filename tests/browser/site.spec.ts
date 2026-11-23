@@ -235,6 +235,10 @@ test("Escape falls back to the selected filter when the opening button was remov
   await expect(dialog).toHaveAccessibleName("チノの立ち絵");
   await expect(dialog.getByText("1 / 1")).toBeVisible();
 
+  // close 時点でフォーカスがダイアログ内に残る経路を狙う
+  const closeButton = dialog.getByRole("button", { name: "閉じる" });
+  await closeButton.focus();
+  await expect(closeButton).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(favoritesFilter).toBeFocused();
