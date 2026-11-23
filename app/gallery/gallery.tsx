@@ -16,8 +16,10 @@ const filters = [
 
 export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
   const [filter, setFilter] = useState<(typeof filters)[number]["value"]>("all");
-  const [index, setIndex] = useState<number | null>(null);
+  // 開いている絵は一覧の位置でなく画像パスで持つ（別タブで一覧が変わっても同じ絵を指す）
+  const [activeImage, setActiveImage] = useState<string | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
+  const filterGroup = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLUListElement>(null);
   const empty = useRef<HTMLParagraphElement>(null);
   // 解除で消えたカードの代わりにフォーカスを渡す先（画像パス、または空の案内）
@@ -26,7 +28,18 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
   const visible = filter === "all" ? artwork
     : filter === "favorites" ? artwork.filter((piece) => favorites.includes(piece.image))
     : artwork.filter((piece) => piece.kind === filter);
-  const active = index === null ? undefined : visible[Math.min(index, visible.length - 1)];
+  const index = activeImage === null ? -1 : visible.findIndex((piece) => piece.image === activeImage);
+  const active = index === -1 ? undefined : visible[index];
+  const activeMissing = activeImage !== null && index === -1;
+
+  // 開いている絵が一覧から外れたら閉じ、元のボタンが消えていれば選択中のフィルターへ戻す
+  useLayoutEffect(() => {
+    if (!activeMissing) return;
+    dialog.current?.close(); // onClose で activeImage が空になる
+    if (!document.activeElement || document.activeElement === document.body) {
+      filterGroup.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
+    }
+  }, [activeMissing]);
 
   useLayoutEffect(() => {
     const target = focusAfterRemoval.current;
@@ -46,13 +59,13 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
   }
 
   function changeArtwork(step: number) {
-    if (visible.length === 0) return;
-    setIndex((current) => current === null ? null : (Math.min(current, visible.length - 1) + step + visible.length) % visible.length);
+    if (index === -1) return;
+    setActiveImage(visible[(index + step + visible.length) % visible.length].image);
   }
 
   return (
     <>
-      <div className={styles.filters} role="group" aria-label="イラストの種類">
+      <div className={styles.filters} ref={filterGroup} role="group" aria-label="イラストの種類">
         {filters.map(({ value, label }) => (
           <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>
             {label}
@@ -70,32 +83,32 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
         {visible.map((item, position) => {
           const saved = favorites.includes(item.image);
           return (
-          <li key={item.image} data-kind={item.kind}>
-            <button
-              className={styles.galleryButton}
-              type="button"
-              onClick={() => { setIndex(position); dialog.current?.showModal(); }}
-              aria-label={`${item.title}を拡大`}
-              aria-haspopup="dialog"
-            >
-              <span className={styles.galleryArt}>
-                <Image src={assetPath(item.image)} alt="" fill sizes="(max-width: 760px) 92vw, 760px" />
-                <span className={styles.galleryZoom} aria-hidden="true">＋</span>
-              </span>
-              <span className={styles.galleryLabel} aria-hidden="true">{item.title}</span>
-            </button>
-            <button
-              className={styles.favoriteButton}
-              type="button"
-              data-favorite={item.image}
-              aria-pressed={saved}
-              aria-label={`${item.title}をお気に入りに保存`}
-              onClick={() => toggle(item.image, position)}
-            >
-              <span aria-hidden="true">{saved ? "★" : "☆"}</span>
-              <span className={styles.favoriteText}>お気に入り</span>
-            </button>
-          </li>
+            <li key={item.image} data-kind={item.kind}>
+              <button
+                className={styles.galleryButton}
+                type="button"
+                onClick={() => { setActiveImage(item.image); dialog.current?.showModal(); }}
+                aria-label={`${item.title}を拡大`}
+                aria-haspopup="dialog"
+              >
+                <span className={styles.galleryArt}>
+                  <Image src={assetPath(item.image)} alt="" fill sizes="(max-width: 760px) 92vw, 760px" />
+                  <span className={styles.galleryZoom} aria-hidden="true">＋</span>
+                </span>
+                <span className={styles.galleryLabel} aria-hidden="true">{item.title}</span>
+              </button>
+              <button
+                className={styles.favoriteButton}
+                type="button"
+                data-favorite={item.image}
+                aria-pressed={saved}
+                aria-label={`${item.title}をお気に入りに保存`}
+                onClick={() => toggle(item.image, position)}
+              >
+                <span aria-hidden="true">{saved ? "★" : "☆"}</span>
+                <span className={styles.favoriteText}>お気に入り</span>
+              </button>
+            </li>
           );
         })}
       </ul>
@@ -104,7 +117,7 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
         className={styles.lightbox}
         ref={dialog}
         aria-label={active?.title}
-        onClose={() => setIndex(null)}
+        onClose={() => setActiveImage(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}
@@ -127,7 +140,7 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
             <div className={styles.lightboxNav}>
               <button type="button" aria-label="前のイラスト" onClick={() => changeArtwork(-1)}>←</button>
               <span className={styles.lightboxCount}>
-                {(index ?? 0) + 1}<small> / {visible.length}</small>
+                {index + 1}<small> / {visible.length}</small>
               </span>
               <button type="button" aria-label="次のイラスト" onClick={() => changeArtwork(1)}>→</button>
             </div>

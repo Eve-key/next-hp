@@ -188,3 +188,30 @@ test("gallery still works when saved favorites are corrupt or storage is unavail
   await page.getByRole("button", { name: "お気に入り", exact: true }).click();
   await expect(page.getByRole("button", { name: /を拡大$/ })).toHaveCount(1);
 });
+
+test("an open favorite follows its image when another tab changes the saved list", async ({ page, context }) => {
+  await page.goto("gallery/");
+  for (const title of ["放課後の一杯", "チノの立ち絵"]) {
+    await page.getByRole("button", { name: `${title}をお気に入りに保存` }).click();
+  }
+  const other = await context.newPage();
+  await other.goto("gallery/");
+
+  const favoritesFilter = page.getByRole("button", { name: "お気に入り", exact: true });
+  await favoritesFilter.click();
+  await page.getByRole("button", { name: "チノの立ち絵を拡大" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await expect(dialog.getByText("2 / 2")).toBeVisible();
+
+  // 手前の絵だけが別タブで外れても、同じ絵と正しい番号のまま
+  await other.getByRole("button", { name: "放課後の一杯をお気に入りに保存" }).click();
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await expect(dialog.getByText("1 / 1")).toBeVisible();
+
+  // 開いている絵そのものが外れたら閉じ、残っている操作へフォーカスを戻す
+  await other.getByRole("button", { name: "チノの立ち絵をお気に入りに保存" }).click();
+  await expect.poll(() => page.locator("dialog").evaluate((element: HTMLDialogElement) => element.open)).toBe(false);
+  await expect(favoritesFilter).toBeFocused();
+  await expect(page.getByText("まだお気に入りはありません", { exact: false })).toBeVisible();
+});

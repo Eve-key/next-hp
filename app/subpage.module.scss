@@ -418,7 +418,11 @@
   padding: 0;
   list-style: none;
 
-  li { position: relative; }
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+  }
   li[data-kind="key"] { grid-column: 1 / -1; }
   li[data-kind="scene"] { grid-column: span 5; }
   li[data-kind="portrait"] { grid-column: span 2; }
@@ -481,11 +485,9 @@
   letter-spacing: .06em;
 }
 
-/* 拡大ボタンとは兄弟にして絵の左上に重ねる。状態は色だけでなく星の形と塗りでも示す */
+/* 拡大ボタンとは兄弟にし、絵を覆わないようキャプションの下に置く。状態は色だけでなく星の形と塗りでも示す */
 .favoriteButton {
-  position: absolute;
-  top: .5rem;
-  left: .5rem;
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: .35rem;
@@ -494,11 +496,10 @@
   border: 1px solid #c6a894;
   border-radius: 999px;
   color: var(--rose-deep);
-  background: #fffaf0eb;
+  background: var(--paper-raised);
   cursor: pointer;
   font: 700 var(--t-small) / 1 var(--gothic);
   letter-spacing: .08em;
-  box-shadow: 0 1px 4px #3b2a2629;
 
   span[aria-hidden] { font-size: 1rem; line-height: 1; }
 
@@ -510,7 +511,7 @@
     border-color: var(--rose-deep);
   }
 
-  &:focus-visible { outline-offset: 2px; box-shadow: 0 0 0 4px var(--paper-raised); }
+  &:focus-visible { outline-offset: 2px; }
 }
 
 .galleryEmpty {
@@ -678,7 +679,7 @@
   .filters button { padding-inline: .75rem; letter-spacing: .06em; }
 
   /* 指で押しやすい大きさに */
-  .favoriteButton { min-height: 2.75rem; top: .4rem; left: .4rem; padding-inline: .55rem .7rem; }
+  .favoriteButton { min-height: 2.75rem; padding-inline: .55rem .7rem; }
 
   .profileNav {
     grid-template-columns: minmax(0, 1fr);
