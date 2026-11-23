@@ -109,3 +109,137 @@ test("scene filter and arrow keys let visitors browse without closing the galler
   await page.keyboard.press("ArrowLeft");
   await expect(dialog).toHaveAccessibleName("放課後の一杯");
 });
+
+test("favorites survive a reload, narrow the gallery and keep focus when the last one is removed", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  // hydration の不一致などを拾う。静的プレビューの RSC プリフェッチ 404 は本機能と無関係なので除く
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().startsWith("Failed to load resource")) errors.push(message.text());
+  });
+
+  await page.goto("gallery/");
+  const zoomButtons = page.getByRole("button", { name: /を拡大$/ });
+  const saveScene = page.getByRole("button", { name: "放課後の一杯をお気に入りに保存" });
+  const savePortrait = page.getByRole("button", { name: "チノの立ち絵をお気に入りに保存" });
+  const favoritesFilter = page.getByRole("button", { name: "お気に入り", exact: true });
+
+  await expect(saveScene).toHaveAttribute("aria-pressed", "false");
+  await saveScene.click();
+  await savePortrait.focus();
+  await page.keyboard.press("Enter");
+  await expect(saveScene).toHaveAttribute("aria-pressed", "true");
+  await expect(savePortrait).toHaveAttribute("aria-pressed", "true");
+  // 保存しても拡大は開かない
+  await expect(page.getByRole("dialog")).toBeHidden();
+
+  await page.reload();
+  await expect(saveScene).toHaveAttribute("aria-pressed", "true");
+  await favoritesFilter.click();
+  await expect(favoritesFilter).toHaveAttribute("aria-pressed", "true");
+  await expect(zoomButtons).toHaveCount(2);
+  await expect(zoomButtons.nth(0)).toHaveAccessibleName("放課後の一杯を拡大");
+  await expect(zoomButtons.nth(1)).toHaveAccessibleName("チノの立ち絵を拡大");
+
+  // 拡大中の左右キーはお気に入りの中だけを巡る
+  await zoomButtons.nth(0).click();
+  const dialog = page.getByRole("dialog");
+  await page.keyboard.press("ArrowRight");
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await page.keyboard.press("ArrowRight");
+  await expect(dialog).toHaveAccessibleName("放課後の一杯");
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(zoomButtons.nth(0)).toBeFocused();
+
+  await savePortrait.click();
+  await expect(zoomButtons).toHaveCount(1);
+  await expect(saveScene).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(zoomButtons).toHaveCount(0);
+  const empty = page.getByText("まだお気に入りはありません", { exact: false });
+  await expect(empty).toBeVisible();
+  await expect(empty).toBeFocused();
+
+  await page.reload();
+  await favoritesFilter.click();
+  await expect(empty).toBeVisible();
+  await page.getByRole("button", { name: "すべて", exact: true }).click();
+  await expect(zoomButtons).toHaveCount(8);
+  expect(errors).toEqual([]);
+});
+
+test("gallery still works when saved favorites are corrupt or storage is unavailable", async ({ page }) => {
+  await page.addInitScript(() => {
+    try { localStorage.setItem("next-hp:gallery-favorites:v1", "{not json"); } catch {}
+  });
+  await page.goto("gallery/");
+  await page.getByRole("button", { name: "お気に入り", exact: true }).click();
+  await expect(page.getByText("まだお気に入りはありません", { exact: false })).toBeVisible();
+
+  await page.addInitScript(() => {
+    Storage.prototype.getItem = () => { throw new DOMException("blocked", "SecurityError"); };
+    Storage.prototype.setItem = () => { throw new DOMException("blocked", "SecurityError"); };
+  });
+  await page.reload();
+  const save = page.getByRole("button", { name: "キービジュアルをお気に入りに保存" });
+  await save.click();
+  await expect(save).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "お気に入り", exact: true }).click();
+  await expect(page.getByRole("button", { name: /を拡大$/ })).toHaveCount(1);
+});
+
+test("an open favorite follows its image when another tab changes the saved list", async ({ page, context }) => {
+  await page.goto("gallery/");
+  for (const title of ["放課後の一杯", "チノの立ち絵"]) {
+    await page.getByRole("button", { name: `${title}をお気に入りに保存` }).click();
+  }
+  const other = await context.newPage();
+  await other.goto("gallery/");
+
+  const favoritesFilter = page.getByRole("button", { name: "お気に入り", exact: true });
+  await favoritesFilter.click();
+  await page.getByRole("button", { name: "チノの立ち絵を拡大" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await expect(dialog.getByText("2 / 2")).toBeVisible();
+
+  // 手前の絵だけが別タブで外れても、同じ絵と正しい番号のまま
+  await other.getByRole("button", { name: "放課後の一杯をお気に入りに保存" }).click();
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await expect(dialog.getByText("1 / 1")).toBeVisible();
+
+  // 開いている絵そのものが外れたら閉じ、残っている操作へフォーカスを戻す
+  await other.getByRole("button", { name: "チノの立ち絵をお気に入りに保存" }).click();
+  await expect.poll(() => page.locator("dialog").evaluate((element: HTMLDialogElement) => element.open)).toBe(false);
+  await expect(favoritesFilter).toBeFocused();
+  await expect(page.getByText("まだお気に入りはありません", { exact: false })).toBeVisible();
+});
+
+test("Escape falls back to the selected filter when the opening button was removed in another tab", async ({ page, context }) => {
+  await page.goto("gallery/");
+  for (const title of ["放課後の一杯", "チノの立ち絵"]) {
+    await page.getByRole("button", { name: `${title}をお気に入りに保存` }).click();
+  }
+  const other = await context.newPage();
+  await other.goto("gallery/");
+
+  const favoritesFilter = page.getByRole("button", { name: "お気に入り", exact: true });
+  await favoritesFilter.click();
+  await page.getByRole("button", { name: "放課後の一杯を拡大" }).click();
+  const dialog = page.getByRole("dialog");
+  await page.keyboard.press("ArrowRight");
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+
+  await other.getByRole("button", { name: "放課後の一杯をお気に入りに保存" }).click();
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await expect(dialog.getByText("1 / 1")).toBeVisible();
+
+  // close 時点でフォーカスがダイアログ内に残る経路を狙う
+  const closeButton = dialog.getByRole("button", { name: "閉じる" });
+  await closeButton.focus();
+  await expect(closeButton).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(favoritesFilter).toBeFocused();
+});

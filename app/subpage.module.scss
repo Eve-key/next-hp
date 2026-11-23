@@ -418,6 +418,11 @@
   padding: 0;
   list-style: none;
 
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+  }
   li[data-kind="key"] { grid-column: 1 / -1; }
   li[data-kind="scene"] { grid-column: span 5; }
   li[data-kind="portrait"] { grid-column: span 2; }
@@ -478,6 +483,45 @@
 .galleryLabel {
   font: 700 var(--t-small) / 1.5 var(--mincho);
   letter-spacing: .06em;
+}
+
+/* 拡大ボタンとは兄弟にし、絵を覆わないようキャプションの下に置く。状態は色だけでなく星の形と塗りでも示す */
+.favoriteButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 2.25rem;
+  padding: .3rem .75rem .3rem .6rem;
+  border: 1px solid #c6a894;
+  border-radius: 999px;
+  color: var(--rose-deep);
+  background: var(--paper-raised);
+  cursor: pointer;
+  font: 700 var(--t-small) / 1 var(--gothic);
+  letter-spacing: .08em;
+
+  span[aria-hidden] { font-size: 1rem; line-height: 1; }
+
+  &:hover { border-color: var(--rose); color: var(--rose); }
+
+  &[aria-pressed="true"] {
+    color: var(--paper-raised);
+    background: var(--rose-deep);
+    border-color: var(--rose-deep);
+  }
+
+  &:focus-visible { outline-offset: 2px; }
+}
+
+.galleryEmpty {
+  margin: 0 0 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px dashed #c6a894;
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  font: 400 var(--t-body) / 1.9 var(--mincho);
+  letter-spacing: .04em;
 }
 
 .lightbox {
@@ -629,6 +673,13 @@
   }
 
   .galleryArt { aspect-ratio: 3 / 2; }
+
+  /* 4つの絞り込みを一行に収める */
+  .filters { gap: .4rem; }
+  .filters button { padding-inline: .75rem; letter-spacing: .06em; }
+
+  /* 指で押しやすい大きさに */
+  .favoriteButton { min-height: 2.75rem; padding-inline: .55rem .7rem; }
 
   .profileNav {
     grid-template-columns: minmax(0, 1fr);
