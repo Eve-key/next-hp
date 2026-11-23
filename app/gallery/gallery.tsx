@@ -32,14 +32,19 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
   const active = index === -1 ? undefined : visible[index];
   const activeMissing = activeImage !== null && index === -1;
 
-  // 開いている絵が一覧から外れたら閉じ、元のボタンが消えていれば選択中のフィルターへ戻す
+  // 開いている絵が一覧から外れたら閉じる（後始末とフォーカスの戻し先は onClose が受け持つ）
   useLayoutEffect(() => {
-    if (!activeMissing) return;
-    dialog.current?.close(); // onClose で activeImage が空になる
+    if (activeMissing) dialog.current?.close();
+  }, [activeMissing]);
+
+  // ネイティブダイアログは開いたボタンへフォーカスを戻す。そのボタンが別タブでの解除などで
+  // 消えていたときだけ、選択中のフィルターへ戻す
+  function handleClose() {
+    setActiveImage(null);
     if (!document.activeElement || document.activeElement === document.body) {
       filterGroup.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
     }
-  }, [activeMissing]);
+  }
 
   useLayoutEffect(() => {
     const target = focusAfterRemoval.current;
@@ -117,7 +122,7 @@ export default function Gallery({ artwork }: { artwork: readonly Artwork[] }) {
         className={styles.lightbox}
         ref={dialog}
         aria-label={active?.title}
-        onClose={() => setActiveImage(null)}
+        onClose={handleClose}
         onClick={(event) => {
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}

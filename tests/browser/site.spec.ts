@@ -215,3 +215,27 @@ test("an open favorite follows its image when another tab changes the saved list
   await expect(favoritesFilter).toBeFocused();
   await expect(page.getByText("まだお気に入りはありません", { exact: false })).toBeVisible();
 });
+
+test("Escape falls back to the selected filter when the opening button was removed in another tab", async ({ page, context }) => {
+  await page.goto("gallery/");
+  for (const title of ["放課後の一杯", "チノの立ち絵"]) {
+    await page.getByRole("button", { name: `${title}をお気に入りに保存` }).click();
+  }
+  const other = await context.newPage();
+  await other.goto("gallery/");
+
+  const favoritesFilter = page.getByRole("button", { name: "お気に入り", exact: true });
+  await favoritesFilter.click();
+  await page.getByRole("button", { name: "放課後の一杯を拡大" }).click();
+  const dialog = page.getByRole("dialog");
+  await page.keyboard.press("ArrowRight");
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+
+  await other.getByRole("button", { name: "放課後の一杯をお気に入りに保存" }).click();
+  await expect(dialog).toHaveAccessibleName("チノの立ち絵");
+  await expect(dialog.getByText("1 / 1")).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(favoritesFilter).toBeFocused();
+});
